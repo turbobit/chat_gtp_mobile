@@ -1,16 +1,7 @@
 # chat_gtp_mobile
 
-A new Flutter project.
+windows, ios, macOS , android
 
-## Getting Started
+#
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+<img width="1079" alt="image" src="https://user-images.githubusercontent.com/11604783/222627882-352dc28a-9c8a-477a-a007-a7091d5b47c2.png">
