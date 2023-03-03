@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'gpt3.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:share_plus/share_plus.dart';
+import 'dart:async';
 
 void main() {
   runApp(MyApp());
@@ -111,38 +112,29 @@ class _GPT3ExampleState extends State<GPT3Example> {
     _saveChatMessages(); // save chat messages
   }
 
-  void _handleSubmitted() async {
-    // Scroll to the bottom of the list after adding a new message
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
-    });
+  StreamSubscription<String>? _streamSubscription;
 
+  @override
+  void dispose() {
+    super.dispose();
+    _streamSubscription?.cancel();
+  }
+
+  void _handleSubmitted() {
     final userMessage = _chatInputController.text;
     final userMessageChatMessage =
         ChatMessage(text: userMessage, isUserMessage: true);
     _addChatMessage(userMessageChatMessage);
 
-    isShowSendbutton = false;
-    final response = await gpt3.generateText('User: $userMessage');
-    final responseChatMessage = ChatMessage(text: response);
-    _addChatMessage(responseChatMessage);
-
     _chatInputController.clear();
-    _saveChatMessages();
-    isShowSendbutton = true;
-    //
 
-    // Scroll to the bottom of the list after adding a new message
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
-      _scrollController.animateTo(
-        _scrollController.position.maxScrollExtent,
-        duration: Duration(milliseconds: 300),
-        curve: Curves.easeOut,
-      );
+    _streamSubscription?.cancel();
+    _streamSubscription =
+        gpt3.generateTextStream('User: $userMessage').listen((response) {
+      if (response.isNotEmpty) {
+        final responseChatMessage = ChatMessage(text: response);
+        _addChatMessage(responseChatMessage);
+      }
     });
   }
 

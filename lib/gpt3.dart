@@ -50,4 +50,35 @@ class GPT3 {
       return "";
     }
   }
+
+  Stream<String> generateTextStream(String input) async* {
+    final Map<String, dynamic> data = {
+      "model": "text-davinci-003",
+      'prompt': input,
+      'max_tokens': 2000,
+    };
+
+    while (true) {
+      final response = await http.post(
+        Uri.parse(_baseUrl + 'completions'),
+        headers: {
+          "Content-Type": "application/json; charset=utf-8",
+          'Authorization': 'Bearer $apiKey'
+        },
+        body: json.encode(data),
+      );
+
+      try {
+        final responseData = json.decode(utf8.decode(response.bodyBytes));
+        final responseText = responseData['choices'][0]['text'].toString();
+
+        final lines = responseText.split('\n');
+        final generatedText = lines.sublist(1).join('\n');
+        yield generatedText;
+      } catch (e) {
+        print('Error: $e');
+        yield '';
+      }
+    }
+  }
 }
